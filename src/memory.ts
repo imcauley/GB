@@ -1,8 +1,13 @@
 export class Memory {
     ram: Uint16Array
 
-    constructor(size: number) {
+    constructor(size: number, program?: Uint16Array) {
         this.ram = new Uint16Array(size);
+        if(program) {
+            program.forEach((word, index) => {
+                this.ram[index] = word;
+            })
+        }
     }
 
     getByte(address: number): number {
