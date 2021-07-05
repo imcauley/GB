@@ -1,17 +1,10 @@
 import {Memory} from './memory';
 import {Register} from './register';
+import {DoubleRegister} from './doubleRegister';
 
 class CPU {
     memory: Memory;
-    registers = {
-        B: new Register(),
-        C: new Register(),
-        D: new Register(),
-        E: new Register(),
-        H: new Register(),
-        L: new Register(),
-        A: new Register(),
-    }
+    registers: Register[];
 
     programCounter: number;
 
@@ -20,11 +13,20 @@ class CPU {
     constructor(memory: Memory) {
         this.memory = memory;
         this.programCounter = 0;
+
+        this.registers.push(new Register()); // B
+        this.registers.push(new Register()); // C
+        this.registers.push(new Register()); // D
+        this.registers.push(new Register()); // E
+        this.registers.push(new Register()); // H
+        this.registers.push(new Register()); // L
+        this.registers.push(new DoubleRegister(this.registers[4], this.registers[5])); // HL
+        this.registers.push(new Register()); // A
     }
 
     runCycle() {
         let opcode = 0x00;
-        
+
         let currentByte = this.memory.getByte(this.programCounter);
         
         if(this.PREFIX_BYTES.has(currentByte)) {
