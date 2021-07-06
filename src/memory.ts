@@ -15,12 +15,12 @@ export class Memory {
             throw new Error("Memory access error");
         }
 
-        const baseAdd = this.ram[address / 16];
-        if(address % 16 == 0) {
-            return baseAdd && 0x00FF;
+        const baseAdd = this.ram[Math.floor(address / 16)];
+        if(address % 16 !== 0) {
+            return baseAdd & 0x00FF;
         }
         else {
-            return (baseAdd && 0xFF00) >> 8;
+            return (baseAdd & 0xFF00) >> 8;
         }
     }
 
