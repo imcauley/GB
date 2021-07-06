@@ -50,14 +50,16 @@ export class CPU {
 
         if(opcodeFragment.x === 0) {
             if(opcodeFragment.z === 6) {
-                this.memory[opcodeFragment.y] = byte2;
+                this.registers[opcodeFragment.y].set(byte2);
             }
 
             if(opcodeFragment.z === 4) {
-                this.memory[opcodeFragment.y]++;
+                let current = this.registers[opcodeFragment.y].get();
+                this.registers[opcodeFragment.y].set(current + 1);
             }
             if(opcodeFragment.z === 5) {
-                this.memory[opcodeFragment.y]--;
+                let current = this.registers[opcodeFragment.y].get();
+                this.registers[opcodeFragment.y].set(current - 1);
             }
         }
     }
