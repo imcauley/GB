@@ -2,7 +2,7 @@ import {Memory} from './memory';
 import {Register} from './register';
 import {DoubleRegister} from './doubleRegister';
 
-class CPU {
+export class CPU {
     memory: Memory;
     registers: Register[];
 
@@ -13,6 +13,8 @@ class CPU {
     constructor(memory: Memory) {
         this.memory = memory;
         this.programCounter = 0;
+
+        this.registers = [];
 
         this.registers.push(new Register()); // B
         this.registers.push(new Register()); // C
@@ -25,19 +27,39 @@ class CPU {
     }
 
     runCycle() {
-        let opcode = 0x00;
+        let opcodeAddress = 0x00;
 
-        let currentByte = this.memory.getByte(this.programCounter);
+        const currentByte = this.memory.getByte(this.programCounter);
         
         if(this.PREFIX_BYTES.has(currentByte)) {
-            opcode = this.memory.getByte(this.programCounter + 0x08);
+            opcodeAddress = this.programCounter + 0x08;
         }
         else {
-            opcode = currentByte;
+            opcodeAddress = this.programCounter;
         }
+
+        let opcode = this.memory.getByte(opcodeAddress);
+        let byte2 = this.memory.getByte(opcodeAddress + 0x08);
+        let byte3 = this.memory.getByte(opcodeAddress + 0x10);
+
+        this.interpretCode(opcode, byte2, byte3);
     }
 
-    interpretCode(opcode: number) {
+    interpretCode(opcode: number, byte2?: number, byte3?: number) {
+        const opcodeFragment = this.opcodeElements(opcode);
+
+        if(opcodeFragment.x === 0) {
+            if(opcodeFragment.z === 6) {
+                this.memory[opcodeFragment.y] = byte2;
+            }
+
+            if(opcodeFragment.z === 4) {
+                this.memory[opcodeFragment.y]++;
+            }
+            if(opcodeFragment.z === 5) {
+                this.memory[opcodeFragment.y]--;
+            }
+        }
     }
 
     opcodeElements(opcode: number) {
@@ -45,7 +67,7 @@ class CPU {
             x: (opcode & 0b11000000) >> 6,
             y: (opcode & 0b00111000) >> 3,
             z: (opcode & 0b00000111),
-            P: (opcode & 0b00001000) >> 3,
+            p: (opcode & 0b00001000) >> 3,
             q: (opcode & 0b00110000) >> 4
         }
     }
