@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "run": "tsc -p tsconfig.json && node src/main.js",
+    "run": "tsc -p tsconfig.json --outDir ./bin  && node bin/src/main.js",
     "test": "jest",
     "clean": "find ./src -type f -name \"*.js\" -o -name \"*.map\" -exec rm -rf {} \\;"
   },
