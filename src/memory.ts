@@ -24,6 +24,29 @@ export class Memory {
         }
     }
 
+    setByte(address: number, value: number) {
+        if(address % 8 != 0) {
+            throw new Error("Memory access error");
+        }
+
+        const index = address / 16;
+
+        if(address % 16 == 0) {
+            let current = this.ram[index];
+            current = current & 0xFF00;
+            current += value;
+            this.ram[index] = current;
+        }
+        else {
+            let current = this.ram[index];
+            current = current & 0x00FF;
+            value = value << 8;
+            current += value;
+            this.ram[index] = current;
+        }
+
+    }
+
     getWord(address: number): number {
         if(address % 16 != 0) {
             throw new Error("Memory access error");
