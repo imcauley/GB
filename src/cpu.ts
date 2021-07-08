@@ -43,6 +43,8 @@ export class CPU {
         let byte3 = this.memory.getByte(opcodeAddress + 0x10);
 
         this.interpretCode(opcode, byte2, byte3);
+
+        this.programCounter += 0x08;
     }
 
     interpretCode(opcode: number, byte2?: number, byte3?: number) {
