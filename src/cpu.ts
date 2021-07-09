@@ -42,9 +42,9 @@ export class CPU {
         let byte2 = this.memory.getByte(opcodeAddress + 0x08);
         let byte3 = this.memory.getByte(opcodeAddress + 0x10);
 
-        this.interpretCode(opcode, byte2, byte3);
+        const bytesUsed = this.interpretCode(opcode, byte2, byte3);
 
-        this.programCounter += 0x08;
+        this.programCounter += (0x08 * bytesUsed);
     }
 
     interpretCode(opcode: number, byte2?: number, byte3?: number) {
@@ -53,15 +53,25 @@ export class CPU {
         if(opcodeFragment.x === 0) {
             if(opcodeFragment.z === 6) {
                 this.registers[opcodeFragment.y].set(byte2);
+                return 2;
             }
 
             if(opcodeFragment.z === 4) {
                 let current = this.registers[opcodeFragment.y].get();
                 this.registers[opcodeFragment.y].set(current + 1);
+                return 1;
             }
             if(opcodeFragment.z === 5) {
                 let current = this.registers[opcodeFragment.y].get();
                 this.registers[opcodeFragment.y].set(current - 1);
+                return 1;
+            }
+        }
+        else if(opcodeFragment.x === 2) {
+            if(opcodeFragment.y === 0) {
+                const r = this.registers[opcodeFragment.z].get();
+                this.registers[7].operation((x: number) => {return x + r});
+                return 1;
             }
         }
     }
