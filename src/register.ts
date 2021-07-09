@@ -12,4 +12,8 @@ export class Register {
     set(value: number) {
         this.memory[0] = value;
     } 
+
+    operation(op: (number) => number) {
+        this.memory[0] = op(this.memory[0]);
+    }
 }
