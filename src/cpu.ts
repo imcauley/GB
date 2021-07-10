@@ -1,6 +1,7 @@
 import {Memory} from './memory';
 import {Register} from './register';
 import {DoubleRegister} from './doubleRegister';
+import { match, __} from 'ts-pattern';
 
 export class CPU {
     memory: Memory;
@@ -50,30 +51,27 @@ export class CPU {
     interpretCode(opcode: number, byte2?: number, byte3?: number) {
         const opcodeFragment = this.opcodeElements(opcode);
 
-        if(opcodeFragment.x === 0) {
-            if(opcodeFragment.z === 6) {
-                this.registers[opcodeFragment.y].set(byte2);
-                return 2;
-            }
-
-            if(opcodeFragment.z === 4) {
-                let current = this.registers[opcodeFragment.y].get();
-                this.registers[opcodeFragment.y].set(current + 1);
-                return 1;
-            }
-            if(opcodeFragment.z === 5) {
-                let current = this.registers[opcodeFragment.y].get();
-                this.registers[opcodeFragment.y].set(current - 1);
-                return 1;
-            }
-        }
-        else if(opcodeFragment.x === 2) {
-            if(opcodeFragment.y === 0) {
-                const r = this.registers[opcodeFragment.z].get();
-                this.registers[7].operation((x: number) => {return x + r});
-                return 1;
-            }
-        }
+        return match(opcodeFragment)
+        .with({x: 0, z: 6}, () => {
+            this.registers[opcodeFragment.y].set(byte2);
+            return 2;
+        })
+        .with({x: 0, z: 4}, () => {
+            let current = this.registers[opcodeFragment.y].get();
+            this.registers[opcodeFragment.y].set(current + 1);
+            return 1;
+        })
+        .with({x: 0, z: 5}, () => {
+            let current = this.registers[opcodeFragment.y].get();
+            this.registers[opcodeFragment.y].set(current - 1);
+            return 1;
+        })
+        .with({x: 2, y: 0}, () => {
+            const r = this.registers[opcodeFragment.z].get();
+            this.registers[7].operation((x: number) => {return x + r});
+            return 1;
+        })
+        .run()
     }
 
     opcodeElements(opcode: number) {
