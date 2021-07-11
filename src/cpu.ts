@@ -71,6 +71,26 @@ export class CPU {
             this.registers[7].operation((x: number) => {return x + r});
             return 1;
         })
+        .with({x: 2, y: 2}, () => {
+            const r = this.registers[opcodeFragment.z].get();
+            this.registers[7].operation((x: number) => {return x - r});
+            return 1;
+        })
+        .with({x: 2, y: 4}, () => {
+            const r = this.registers[opcodeFragment.z].get();
+            this.registers[7].operation((x: number) => {return x & r});
+            return 1;
+        })
+        .with({x: 2, y: 5}, () => {
+            const r = this.registers[opcodeFragment.z].get();
+            this.registers[7].operation((x: number) => {return x ^ r});
+            return 1;
+        })
+        .with({x: 2, y: 6}, () => {
+            const r = this.registers[opcodeFragment.z].get();
+            this.registers[7].operation((x: number) => {return x | r});
+            return 1;
+        })
         .run()
     }
 
