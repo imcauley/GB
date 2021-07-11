@@ -2,14 +2,16 @@ import {Memory} from './memory';
 import {Register} from './register';
 import {DoubleRegister} from './doubleRegister';
 import { match, __} from 'ts-pattern';
+import { StatusRegister } from './statusRegister';
 
 export class CPU {
     memory: Memory;
     registers: Register[];
+    statusRegister = new StatusRegister();
 
     programCounter: number;
 
-    PREFIX_BYTES = new Set([0xCB, 0xDD, 0xED, 0xFD])
+    PREFIX_BYTES = new Set([0xCB, 0xDD, 0xED, 0xFD]);
 
     constructor(memory: Memory) {
         this.memory = memory;
