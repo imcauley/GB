@@ -12,3 +12,10 @@ test('index 0 access', () => {
     cpu.runCycle();
     expect(cpu.registers[0].get()).toBe(0x04);
 })
+
+test('stack pointer', () => {
+    let mem = new Memory(400);
+    let cpu = new CPU(mem);
+
+    expect(cpu.stackPointer.get()).toBe(0xFFFE);
+})

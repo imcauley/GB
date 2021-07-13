@@ -8,6 +8,7 @@ export class CPU {
     memory: Memory;
     registers: Register[];
     statusRegister = new StatusRegister();
+    stackPointer = new DoubleRegister();
 
     programCounter: number;
 
@@ -18,6 +19,8 @@ export class CPU {
         this.programCounter = 0;
 
         this.registers = [];
+
+        this.stackPointer.set(0xFFFE);
 
         this.registers.push(new Register()); // B
         this.registers.push(new Register()); // C
