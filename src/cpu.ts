@@ -50,7 +50,9 @@ export class CPU {
 
         const bytesUsed = this.interpretCode(opcode, byte2, byte3);
 
-        this.programCounter += (0x08 * bytesUsed);
+        if(bytesUsed) {
+            this.programCounter += (0x08 * bytesUsed);
+        }   
     }
 
     interpretCode(opcode: number, byte2?: number, byte3?: number) {
@@ -62,11 +64,13 @@ export class CPU {
             return 2;
         })
         .with({x: 0, z: 4}, () => {
+            // INC r
             let current = this.registers[opcodeFragment.y].get();
             this.registers[opcodeFragment.y].set(current + 1);
             return 1;
         })
         .with({x: 0, z: 5}, () => {
+            // DEC r
             let current = this.registers[opcodeFragment.y].get();
             this.registers[opcodeFragment.y].set(current - 1);
             return 1;
@@ -95,6 +99,11 @@ export class CPU {
             const r = this.registers[opcodeFragment.z].get();
             this.registers[7].operation((x: number) => {return x | r});
             return 1;
+        })
+        .with({x: 3, z: 3, y: 0}, () => {
+            // JP nn
+            this.programCounter = byte2;
+            return 0;
         })
         .run()
     }
