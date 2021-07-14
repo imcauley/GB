@@ -59,6 +59,10 @@ export class CPU {
         const opcodeFragment = this.opcodeElements(opcode);
 
         return match(opcodeFragment)
+        .with({x: 0, y: 0, z: 0}, () => {
+            // NOP
+            return 1;
+        })
         .with({x: 0, z: 6}, () => {
             this.registers[opcodeFragment.y].set(byte2);
             return 2;
