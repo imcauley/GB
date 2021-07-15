@@ -64,7 +64,8 @@ export class CPU {
             return 1;
         })
         .with({x: 0, z: 6}, () => {
-            this.registers[opcodeFragment.y].set(byte2);
+            // LD r, n8
+            const se = this.registers[opcodeFragment.y].set(byte2);
             return 2;
         })
         .with({x: 0, z: 4}, () => {
@@ -80,8 +81,10 @@ export class CPU {
             return 1;
         })
         .with({x: 2, y: 0}, () => {
+            // ADD r, r8
             const r = this.registers[opcodeFragment.z].get();
-            this.registers[7].operation((x: number) => {return x + r});
+            const se = this.registers[7].operation((x: number) => {return x + r});
+            this.statusRegister.setFlags(se.zeroResult, false, se.halfCarry, se.fullCarry);
             return 1;
         })
         .with({x: 2, y: 2}, () => {
