@@ -35,3 +35,20 @@ test('add B to A', () => {
     cpu.runCycle();
     expect(cpu.registers[7].get()).toBe(0x08);
 })
+
+test('full carry flag', () => {
+    // LD B, 0xFF
+    // LD A, 4
+    // ADD A, B
+    let program = new Uint16Array([0x06FF, 0x3E04, 0x8000]);
+    let mem = new Memory(400, program);
+
+    const value = mem.getWord(0);
+
+    let cpu = new CPU(mem);
+    cpu.runCycle();
+    cpu.runCycle();
+    cpu.runCycle();
+    expect(cpu.registers[7].get()).toBe(0x03);
+    expect(cpu.statusRegister.getFlag('C')).toBe(true);
+})
