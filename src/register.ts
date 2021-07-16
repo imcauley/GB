@@ -10,7 +10,7 @@ export class Register {
     }
 
     set(value: number) {
-        this.memory[0] = value;
+        this.memory[0] = value & 0xFF;
     } 
 
     operation(op: (number) => number) {
@@ -19,8 +19,8 @@ export class Register {
             halfCarry: op(this.memory[0] & 0x0F) > 0x0F,
             fullCarry: op(this.memory[0]) > 0xFF,
         };
-        
-        this.memory[0] = op(this.memory[0]);
+
+        this.set(op(this.memory[0]))
         return sideEffects;
     }
 }
