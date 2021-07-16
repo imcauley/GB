@@ -20,7 +20,10 @@ export class StatusRegister extends Register {
     }
 
     getFlag(flag: string) {
-        return this.get() & this.flagMap[flag];
+        if(!['Z', 'N', 'H', 'C'].includes(flag)) {
+            throw new Error("status register access error");
+        }
+        return this[flag];
     }
 
     setFlag(flag: string, value: boolean) {
