@@ -36,6 +36,23 @@ test('add B to A', () => {
     expect(cpu.registers[7].get()).toBe(0x08);
 })
 
+test('half carry flag', () => {
+    // LD B, 0x0F
+    // LD A, 4
+    // ADD A, B
+    let program = new Uint16Array([0x060F, 0x3E04, 0x8000]);
+    let mem = new Memory(400, program);
+
+    const value = mem.getWord(0);
+
+    let cpu = new CPU(mem);
+    cpu.runCycle();
+    cpu.runCycle();
+    cpu.runCycle();
+    expect(cpu.registers[7].get()).toBe(0x04 + 0x0F);
+    expect(cpu.statusRegister.getFlag('H')).toBe(true);
+})
+
 test('full carry flag', () => {
     // LD B, 0xFF
     // LD A, 4
