@@ -34,10 +34,13 @@ export class CPU {
 
     runCycle() {
         let opcodeAddress = 0x00;
+        let prefix = 0x00;
 
         const currentByte = this.memory.getByte(this.programCounter);
         
+
         if(this.PREFIX_BYTES.has(currentByte)) {
+            prefix = currentByte;
             opcodeAddress = this.programCounter + 0x08;
         }
         else {
@@ -46,22 +49,28 @@ export class CPU {
 
         let opcode = this.memory.getByte(opcodeAddress);
         let byte2 = this.memory.getByte(opcodeAddress + 0x08);
-        let byte3 = this.memory.getByte(opcodeAddress + 0x10);
+        // let byte3 = this.memory.getByte(opcodeAddress + 0x10);
 
-        const bytesUsed = this.interpretCode(opcode, byte2, byte3);
+        const bytesUsed = this.interpretCode(opcode, byte2, prefix);
 
         if(bytesUsed) {
             this.programCounter += (0x08 * bytesUsed);
         }   
     }
 
-    interpretCode(opcode: number, byte2?: number, byte3?: number) {
-        const opcodeFragment = this.opcodeElements(opcode);
+    interpretCode(opcode: number, byte2?: number, prefix?: number) {
+        const opcodeFragment = this.opcodeElements(opcode, prefix);
 
         return match(opcodeFragment)
         .with({x: 0, y: 0, z: 0}, () => {
             // NOP
             return 1;
+        })
+        .with({prefix: 0xCB}, () => {
+            // BIT u3, r8
+            const selectedBit = this.registers[opcodeFragment.z].get() & opcodeFragment.y;
+            const isZero = selectedBit === 0x00;
+            this.statusRegister.setFlags(isZero, false, true, false);
         })
         .with({x: 0, z: 6}, () => {
             // LD r, n8
@@ -81,28 +90,32 @@ export class CPU {
             return 1;
         })
         .with({x: 2, y: 0}, () => {
-            // ADD r, r8
+            // ADD r8, r8
             const r = this.registers[opcodeFragment.z].get();
             const se = this.registers[7].operation((x: number) => {return x + r});
             this.statusRegister.setFlags(se.zeroResult, false, se.halfCarry, se.fullCarry);
             return 1;
         })
         .with({x: 2, y: 2}, () => {
+            // SUB r8, r8
             const r = this.registers[opcodeFragment.z].get();
             this.registers[7].operation((x: number) => {return x - r});
             return 1;
         })
         .with({x: 2, y: 4}, () => {
+            // AND r8, r8
             const r = this.registers[opcodeFragment.z].get();
             this.registers[7].operation((x: number) => {return x & r});
             return 1;
         })
         .with({x: 2, y: 5}, () => {
+            // XOR r8, r8
             const r = this.registers[opcodeFragment.z].get();
             this.registers[7].operation((x: number) => {return x ^ r});
             return 1;
         })
         .with({x: 2, y: 6}, () => {
+            // OR r8, r8
             const r = this.registers[opcodeFragment.z].get();
             this.registers[7].operation((x: number) => {return x | r});
             return 1;
@@ -115,13 +128,14 @@ export class CPU {
         .run()
     }
 
-    opcodeElements(opcode: number) {
+    opcodeElements(opcode: number, prefix: number) {
         return {
             x: (opcode & 0b11000000) >> 6,
             y: (opcode & 0b00111000) >> 3,
             z: (opcode & 0b00000111),
             p: (opcode & 0b00001000) >> 3,
-            q: (opcode & 0b00110000) >> 4
+            q: (opcode & 0b00110000) >> 4,
+            prefix: prefix
         }
     }
 }
