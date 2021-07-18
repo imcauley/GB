@@ -8,7 +8,7 @@
   },
   "scripts": {
     "run": "tsc -p tsconfig.json --outDir ./bin  && node bin/src/main.js",
-    "test": "jest",
+    "test": "jest --collectCoverage",
     "clean": "find ./src -type f -name \"*.js\" -o -name \"*.map\" -exec rm -rf {} \\;"
   },
   "keywords": [],
