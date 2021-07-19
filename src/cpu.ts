@@ -66,11 +66,12 @@ export class CPU {
             // NOP
             return 1;
         })
-        .with({prefix: 0xCB}, () => {
+        .with({prefix: 0xCB, x:1}, () => {
             // BIT u3, r8
-            const selectedBit = this.registers[opcodeFragment.z].get() & opcodeFragment.y;
+            const selectedBit = this.registers[opcodeFragment.z].get() & (0x01 << opcodeFragment.y);
             const isZero = selectedBit === 0x00;
             this.statusRegister.setFlags(isZero, false, true, false);
+            return 2;
         })
         .with({x: 0, z: 6}, () => {
             // LD r, n8
