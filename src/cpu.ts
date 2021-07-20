@@ -13,6 +13,7 @@ export class CPU {
     programCounter: number;
 
     PREFIX_BYTES = new Set([0xCB, 0xDD, 0xED, 0xFD]);
+    CONDITION_TABLE = ["NZ", "Z", "NC", "C"];
 
     constructor(memory: Memory) {
         this.memory = memory;
