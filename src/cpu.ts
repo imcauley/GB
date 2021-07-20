@@ -80,13 +80,13 @@ export class CPU {
             return 2;
         })
         .with({x: 0, z: 4}, () => {
-            // INC r
+            // INC r8
             let current = this.registers[opcodeFragment.y].get();
             this.registers[opcodeFragment.y].set(current + 1);
             return 1;
         })
         .with({x: 0, z: 5}, () => {
-            // DEC r
+            // DEC r8
             let current = this.registers[opcodeFragment.y].get();
             this.registers[opcodeFragment.y].set(current - 1);
             return 1;
@@ -122,8 +122,19 @@ export class CPU {
             this.registers[7].operation((x: number) => {return x | r});
             return 1;
         })
+        .with({x: 3, z: 2}, () => {
+            // JP cc, n16
+            const condition = this.CONDITION_TABLE[opcodeFragment.y];
+            if(this.statusRegister.getFlag(condition)) {
+                this.programCounter = byte2;
+                return 0;
+            }
+            else {
+                return 2;
+            }
+        })
         .with({x: 3, z: 3, y: 0}, () => {
-            // JP nn
+            // JP n16
             this.programCounter = byte2;
             return 0;
         })
