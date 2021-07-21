@@ -92,9 +92,17 @@ export class CPU {
             return 1;
         })
         .with({x: 2, y: 0}, () => {
-            // ADD r8, r8
+            // ADD A, r8
             const r = this.registers[opcodeFragment.z].get();
             const se = this.registers[7].operation((x: number) => {return x + r});
+            this.statusRegister.setFlags(se.zeroResult, false, se.halfCarry, se.fullCarry);
+            return 1;
+        })
+        .with({x: 2, y: 1}, () => {
+            // ADC A, r8
+            const r = this.registers[opcodeFragment.z].get();
+            const carry = this.statusRegister.getFlag('C') ? 1 : 0;
+            const se = this.registers[7].operation((x: number) => {return x + r + carry});
             this.statusRegister.setFlags(se.zeroResult, false, se.halfCarry, se.fullCarry);
             return 1;
         })
