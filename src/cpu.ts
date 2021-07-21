@@ -7,6 +7,7 @@ import { StatusRegister } from './statusRegister';
 export class CPU {
     memory: Memory;
     registers: Register[];
+    doubleRegisters: Register[];
     statusRegister = new StatusRegister();
     stackPointer = new DoubleRegister();
 
@@ -20,6 +21,7 @@ export class CPU {
         this.programCounter = 0;
 
         this.registers = [];
+        this.doubleRegisters = [];
 
         this.stackPointer.set(0xFFFE);
 
@@ -31,6 +33,13 @@ export class CPU {
         this.registers.push(new Register()); // L
         this.registers.push(new DoubleRegister(this.registers[4], this.registers[5])); // HL
         this.registers.push(new Register()); // A
+        this.registers.push(new Register()); // F
+
+
+        this.doubleRegisters.push(new DoubleRegister(this.registers[0], this.registers[1])); // BC
+        this.doubleRegisters.push(new DoubleRegister(this.registers[2], this.registers[3])); // DE
+        this.doubleRegisters.push(new DoubleRegister(this.registers[4], this.registers[5])); // HL
+        this.doubleRegisters.push(new DoubleRegister(this.registers[7], this.registers[8])); // AF
     }
 
     runCycle() {
