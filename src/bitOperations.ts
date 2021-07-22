@@ -12,4 +12,9 @@ export class BitOperations {
     public static getLow(word: number) {
         return (word & 0x00FF);
     }
+
+    public static convertToWord(high: number, low: number)
+    {
+        return (high << 8) + low;
+    }
 }
