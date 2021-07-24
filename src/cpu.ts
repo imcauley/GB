@@ -3,6 +3,7 @@ import {Register} from './register';
 import {DoubleRegister} from './doubleRegister';
 import { match, __} from 'ts-pattern';
 import { StatusRegister } from './statusRegister';
+import { IndirectRegister } from './indirectRegister';
 
 export class CPU {
     memory: Memory;
@@ -31,7 +32,7 @@ export class CPU {
         this.registers.push(new Register()); // E
         this.registers.push(new Register()); // H
         this.registers.push(new Register()); // L
-        this.registers.push(new DoubleRegister(this.registers[4], this.registers[5])); // HL
+        this.registers.push(new IndirectRegister(this.memory, this.registers[4], this.registers[5])) // (HL)
         this.registers.push(new Register()); // A
         this.registers.push(new Register()); // F
 
