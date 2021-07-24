@@ -116,25 +116,33 @@ export class CPU {
             return 1;
         })
         .with({x: 2, y: 2}, () => {
-            // SUB r8, r8
+            // SUB A, r8
             const r = this.registers[opcodeFragment.z].get();
             this.registers[7].operation((x: number) => {return x - r});
             return 1;
         })
+        .with({x: 2, y: 1}, () => {
+            // SBC A, r8
+            const r = this.registers[opcodeFragment.z].get();
+            const carry = this.statusRegister.getFlag('C') ? 1 : 0;
+            const se = this.registers[7].operation((x: number) => {return x - r - carry});
+            this.statusRegister.setFlags(se.zeroResult, false, se.halfCarry, se.fullCarry);
+            return 1;
+        })
         .with({x: 2, y: 4}, () => {
-            // AND r8, r8
+            // AND A, r8
             const r = this.registers[opcodeFragment.z].get();
             this.registers[7].operation((x: number) => {return x & r});
             return 1;
         })
         .with({x: 2, y: 5}, () => {
-            // XOR r8, r8
+            // XOR A, r8
             const r = this.registers[opcodeFragment.z].get();
             this.registers[7].operation((x: number) => {return x ^ r});
             return 1;
         })
         .with({x: 2, y: 6}, () => {
-            // OR r8, r8
+            // OR A, r8
             const r = this.registers[opcodeFragment.z].get();
             this.registers[7].operation((x: number) => {return x | r});
             return 1;
