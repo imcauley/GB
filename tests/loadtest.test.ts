@@ -19,3 +19,17 @@ test('stack pointer', () => {
 
     expect(cpu.stackPointer.get()).toBe(0xFFFE);
 })
+
+test('(HL) test', () => {
+    // LDB, 0x04 = 0x0604
+    let program = new Uint16Array([0x3604, 0x3400]);
+    let mem = new Memory(400, program);
+
+    const value = mem.getWord(0);
+
+    let cpu = new CPU(mem);
+    cpu.runCycle();
+    expect(cpu.registers[6].get()).toBe(0x04);
+    cpu.runCycle();
+    expect(cpu.registers[6].get()).toBe(0x05);
+})
