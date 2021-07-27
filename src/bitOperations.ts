@@ -17,4 +17,9 @@ export class BitOperations {
     {
         return (high << 8) + low;
     }
+
+    public static convertToSigned(byte: number)
+    {
+        return (byte - 128);
+    }
 }
