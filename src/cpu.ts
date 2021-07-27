@@ -4,6 +4,7 @@ import {DoubleRegister} from './doubleRegister';
 import { match, __} from 'ts-pattern';
 import { StatusRegister } from './statusRegister';
 import { IndirectRegister } from './indirectRegister';
+import { BitOperations } from './bitOperations';
 
 export class CPU {
     memory: Memory;
@@ -147,6 +148,12 @@ export class CPU {
             const r = this.registers[opcodeFragment.z].get();
             this.registers[7].operation((x: number) => {return x | r});
             return 1;
+        })
+        .with({x: 3, y: 5, z: 0}, () => {
+            // ADD SP, e8
+            const e8 = BitOperations.convertToSigned(byte2)
+            this.stackPointer.operation((x: number) => {return x + e8});
+            return 2;
         })
         .with({x: 3, z: 2}, () => {
             // JP cc, n16
